@@ -181,7 +181,7 @@ def cambiarP(email):
                     if flag == false:
                         return render_template("recuperar_contraseña2.html")
                     password = hash_password(password=password)
-                    consultas.update_password(email=email, password=password)
+                    consultas.update_password(email=email, password_verified=password_verified)
                     flash("Contraseña actualizada")
                     return render_template("login.html")
             else:
@@ -192,7 +192,7 @@ def cambiarP(email):
             return render_template("recuperar_contraseña2.html")
     else:
         flash("Algo salió mal ;(")
-        return render_template("recuperar_contraseña2.html")
+        return ("recuperar_contraseña2.html")
 
 
 @app.get("/user_home")
@@ -201,12 +201,14 @@ def render_home():
      
     return render_template("user_home.html",id_user=session['id'], products=products)
 
-@app.get("/user_home")
+@app.route("/user_home",methods=["GET","POST"])
 def select_products_add():
     cursor=db.cursor()
     cursor.execute("SELECT * FROM productos")
-    datos= cursor.fecthall()
-    return render_template("user_home.html", datos=datos)
+    vas= cursor.fecthall()
+    print(vas)
+    cursor.close()
+    return redirect(url_for('render_home'), datos=vas)
 
 @app.route("/user_home",methods=["POST"])
 def agregar():
@@ -241,9 +243,11 @@ def agregar():
         nombre_imagen = imagen.filename
         imagen.save("./static/cambiar_avatar/"+nombre_imagen)
      
-        consultas.guardar_datos_de_crud(nombre=nombre, descripción=descripción, precio=precio, estado=estado,imagen='/static/cambiar_avatar'+nombre_imagen, id_user=session['id'])
-        flash("Nuevo Producto Agregado a la Lista")
-        return redirect(url_for('agregar'))
+        if consultas.guardar_datos_de_crud(nombre=nombre, descripción=descripción, precio=precio, estado=estado,imagen='/static/cambiar_avatar'+nombre_imagen, id_user=session['id']) == True:
+            consultas.guardar_datos_de_crud(nombre=nombre, descripción=descripción, precio=precio, estado=estado, imagen=imagen)
+            flash("Nuevo Producto Agregado a la Lista")
+            return redirect(url_for("agregar"))
+        return render_template("user_home.html")
         
     else:
         flash("no tiene permiso")
@@ -280,11 +284,10 @@ def updating_data_company(id):
         nombre_imagen = image.filename
         image.save("./static/cambiar_avatar/"+nombre_imagen)
         consultas.updating_company(username=username, password=password, email=email,phone=phone, description=description, address=address, image='/static/cambiar_avatar/' + nombre_imagen, id=id)
+        flash("Cambio de datos exitoso")
         return redirect(url_for('user_home_user'))
 
 
-#----------------------- Falta: marca de tiempo img, arreglar cambio de password(falta poquito las funciones ya están) y correo no repetido al registrarse----------
-#-------------------------------- terminar --------------------------------------------------------
 @app.route("/editar/<id>")
 def editar(id):
         datos = consultas.editar_productos(id=id)

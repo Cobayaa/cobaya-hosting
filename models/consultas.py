@@ -108,9 +108,9 @@ def change_password(email):
         validar=True
     return validar 
     
-def update_password(email, password):
+def update_password(email, password_verified):
     cursor = db.cursor(buffered=True)
-    cursor.execute("UPDATE login_users SET password='"+ password +"' where email='"+ email +"'")
+    cursor.execute("UPDATE login_users SET password='"+ password_verified +"' where email='"+ email +"'")
     cursor.close()
 
    
@@ -155,7 +155,7 @@ def email_no_repetido(email):
 
 def updating_company(username, password, email, phone, description, address, image, id):
     cursor=db.cursor(buffered=True)
-    cursor.execute("UPDATE login_users SET username=%s,password=%s, email=%s, phone=%s, description=%s, address=%s, image=%s, WHERE id=%s",(
+    cursor.execute("UPDATE login_users SET username=%s,password=%s, email=%s, phone=%s, description=%s, address=%s, image=%s WHERE id=%s",(
         username,
         password, 
         email, 
