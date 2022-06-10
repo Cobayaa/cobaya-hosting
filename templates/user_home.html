@@ -1,0 +1,90 @@
+
+{% extends "base.html"%}
+
+{% block titulo%}
+    Agregar Productos
+{% endblock %}
+
+
+{% block contenido%}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+    <p>{{message}}</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/estilo_admin.css">
+    <title>Admin</title>
+    <link rel="icon" type="image/png" href="/static/logo1.png">
+</head>
+<body>
+    <section>
+        <h1 class="logo">Cobaya<span class="punto">.</span></h1>
+        <div class="separador">
+            <ul>
+                <li><a class="pedidos" href="#">Pedidos</a></li>
+                <li><a class="reservaciones" href="#">Reservaciones</a></li>
+                <li><a class="calificaciones" href="{{ url_for('company_products') }}">Menú</a></li>
+                <li><a class="actu" href="/updating_company_document/{{ session['id' ]}}">actualizar datos</a></li>
+                <li><a class="salir" href="{{ url_for('layout') }}">Cerrar Sesión</a></li>
+            </ul>
+            
+        </div>
+    </section>
+
+    <h1>Inventario de Productos</h1>
+    
+    <form class="agregar" action="{{url_for('agregar')}}" enctype="multipart/form-data" method="POST">
+        <input type="text" placeholder="producto" name="nombre">
+        <input type="text" placeholder="descripción" name="descripción">
+        <input type="number" placeholder="precio" name="precio">
+        <input type="text" placeholder="estado" name="estado">
+        <input type="file" placeholder="imágen" name="imagen">
+        <input type="submit" name="" value="Guardar">
+    </form>
+    <table class="table table-hover table-dark">
+        <thead>
+          <tr>
+            <th scope="col">Producto</th>
+            <th scope="col">descripción</th>
+            <th scope="col">precio</th>
+            <th scope="col">estado</th>
+            <th scope="col">imagen</th>
+            <th scope="col">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+            {%for dato in datos %}
+            <tr>
+                <td>{{dato[1]}}</td>
+                <td>{{dato[2]}}</td>
+                <td>{{dato[3]}}</td>
+                <td>{{dato[4]}}</td>
+                <td>
+                    <img src="{{dato[5]}}" width="60px">
+                </td>
+                
+    
+                <td>
+                    <a class="editar" href="/editar/{{dato[0]}}">editar</a>
+                    <a class="eliminar" href="/eliminar/{{dato[0]}}">eliminar</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    {% endblock %} 
+</body>
+<script src="/static/js/admin_darkmode.js"></script>
+</html>
+    
